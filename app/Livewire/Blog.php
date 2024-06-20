@@ -4,14 +4,17 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
 use App\Models\Post;
-
 
 class Blog extends Component
 {
+    use WithFileUploads;
+
     public $posts;
     public $content;
     public $title;
+    public $image; // Propiedad para manejar la imagen
     public $editPostId;
     public $editingPostId;
     public $editedTitle;
@@ -24,8 +27,9 @@ class Blog extends Component
 
     public function resetPostForm()
     {
-        $this->title = ''; 
+        $this->title = '';
         $this->content = '';
+        $this->image = null; // Restablecer la imagen
     }
 
     public function createPost()
@@ -33,70 +37,26 @@ class Blog extends Component
         $this->validate([
             'title' => 'required|string|max:50',
             'content' => 'required|string',
+            'image' => 'nullable|image|max:1024', // Validación para la imagen (opcional)
         ]);
-    
-        if ($this->editPostId) {
-            $post = Post::find($this->editPostId);
-            if ($post && ($post->user_id == Auth::id() || Auth::user()->role == 'admin')) {
-                $post->title = $this->title;
-                $post->content = $this->content;
-                $post->save();
-            }
-        } else {
-            // Crear nuevo post
-            $post = new Post;
-            $post->title = $this->title;
-            $post->content = $this->content;
-            $post->user_id = Auth::id();
-            $post->save();
+
+        $imageName = null;
+        if ($this->image) {
+            $imageName = $this->image->store('public/posts'); // Guardar la imagen en storage
         }
-    
+
+        // Crear nuevo post
+        $post = new Post;
+        $post->title = $this->title;
+        $post->content = $this->content;
+        $post->image = $imageName; // Asignar el nombre de la imagen al campo correspondiente en la base de datos
+        $post->user_id = Auth::id();
+        $post->save();
+
         $this->resetPostForm(); // Restablecer los campos del formulario después de crear el post
-    
+
         $this->posts = Post::with('user')->get();
         session()->flash('message', 'Post guardado exitosamente.');
-        return redirect()->route('blog-posts');
-    }
-
-
-
-    public function startEditing($postId)
-    {
-        $this->editingPostId = $postId;
-        $post = Post::find($postId);
-        $this->editedTitle = $post->title;
-        $this->editedContent = $post->content;
-    }
-
-    public function cancelEditing()
-    {
-        $this->editingPostId = null;
-        $this->editedTitle = '';
-        $this->editedContent = '';
-    }
-
-    public function updatePost()
-    {
-        $post = Post::find($this->editingPostId);
-        if ($post && ($post->user_id == Auth::id() || Auth::user()->role == 'admin')) {
-            $post->title = $this->editedTitle;
-            $post->content = $this->editedContent;
-            $post->save();
-            $this->editingPostId = null;
-            $this->editedTitle = '';
-            $this->editedContent = '';
-            session()->flash('message', 'Post actualizado exitosamente.');
-        }
-    }
-
-    public function deletePost($postId)
-    {
-        $post = Post::find($postId);
-        if ($post && ($post->user_id == Auth::id() || Auth::user()->role == 'admin')) {
-            $post->delete();
-            $this->posts = Post::with('user')->get();
-            session()->flash('message', 'Post eliminado exitosamente.');
-        }
     }
 
     public function render()

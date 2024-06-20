@@ -10,6 +10,11 @@ use App\Livewire\Blog;
 use App\Livewire\BlogPosts;
 use App\Models\User;
 use App\Models\Post;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ImportController;
+use App\Livewire\UserProfile;
+use App\Livewire\Inbox;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,6 +50,8 @@ Route::get('/user/{userId}/posts', function ($userId) {
 
 Route::get('/blog', Blog::class)->name('blog');
 Route::get('/blog-posts', BlogPosts::class)->name('blog-posts');
+Route::get('/user-profile', UserProfile::class)->name('user-profile');
+Route::get('/inbox', Inbox::class)->name('inbox');
 
 
 
@@ -59,6 +66,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
         return view('user.dashboard');
     });
 });
+
+Route::get('/export', [ExportController::class, 'export'])->name('export');
+
+Route::get('/import', [ImportController::class, 'showForm'])->name('import.form');
+Route::post('/import', [ImportController::class, 'import'])->name('import');
 
 // Route::get('users-create', UsersEdit::class)->name('users-create')->withoutMiddleware('auth');
 

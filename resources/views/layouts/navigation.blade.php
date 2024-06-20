@@ -18,9 +18,6 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Log in') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
-                        {{ __('Register') }}
-                    </x-nav-link>
                     <x-nav-link :href="route('form')" :active="request()->routeIs('form')">
                         {{ __('List') }}
                     </x-nav-link>
@@ -33,6 +30,14 @@
                     <x-nav-link :href="route('blog-posts')" :active="request()->routeIs('blog-posts')">
                         {{ __('Posts') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('user-profile')" :active="request()->routeIs('user-profile')">
+                        {{ __('My Profile') }}
+                    </x-nav-link>
+                    @auth
+                    <x-nav-link :href="route('inbox')" :active="request()->routeIs('inbox')">
+                        {{ __('Messages') }}
+                    </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
@@ -59,15 +64,17 @@
                         </x-dropdown-link>
 
                         <!-- Authentication -->
+                        @auth
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
+                    
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
+                    @endauth
                     </x-slot>
                 </x-dropdown>
             </div>

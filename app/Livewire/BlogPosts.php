@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Response;
 use App\Models\Like;
+use App\Models\User;
 
 class BlogPosts extends Component
 {
@@ -21,10 +22,20 @@ class BlogPosts extends Component
     public $postIdBeingResponded;
     public $like;
     public $likeCounter;
+    public $avatar;
+    public $showAvatarUploader = false;
+
+    public $emojiList = ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐', '😕', '😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '😈', '👿', '💀', '☠️', '💩', '🤡', '👹', '👺', '👻', '👽', '👾', '🤖', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'];
+    public $showEmojiList = false;
+
+    protected $rules = [
+        'title' => 'required|string|max:50',
+        'content' => 'required|string',
+    ];
 
     public function mount()
     {
-        $this->posts = Post::with(['user', 'responses.user','likes'])->get();
+        $this->posts = Post::with(['user', 'responses.user', 'likes'])->get();
     }
 
     public function resetPostForm()
@@ -35,10 +46,7 @@ class BlogPosts extends Component
 
     public function createPost()
     {
-        $this->validate([
-            'title' => 'required|string|max:50',
-            'content' => 'required|string',
-        ]);
+        $this->validate();
     
         if ($this->editPostId) {
             $post = Post::find($this->editPostId);
@@ -56,10 +64,8 @@ class BlogPosts extends Component
         }
     
         $this->resetPostForm();
-    
-        $this->posts = Post::with(['user', 'responses.user'])->get();
+        $this->posts = Post::with(['user', 'responses.user', 'likes'])->get();
         session()->flash('message', 'Post guardado exitosamente.');
-        return redirect()->route('/blog-posts');
     }
 
     public function startEditing($postId)
@@ -96,41 +102,9 @@ class BlogPosts extends Component
         $post = Post::find($postId);
         if ($post && ($post->user_id == Auth::id() || Auth::user()->role == 'admin')) {
             $post->delete();
-            $this->posts = Post::with(['user', 'responses.user'])->get();
+            $this->posts = Post::with(['user', 'responses.user', 'likes'])->get();
             session()->flash('message', 'Post eliminado exitosamente.');
         }
-    }
-
-    public function counterLike(){
-        $post = Post::find($this->counterLikePostId);
-        if ($post && ($post->user_id == Auth::id() || Auth::user()->role == 'admin')) {
-
-        }
-
-    }
-
-    public function startResponding($postId)
-    {
-        $this->postIdBeingResponded = $postId;
-        $this->responseContent = '';
-    }
-
-    public function submitResponse()
-    {
-        $this->validate([
-            'responseContent' => 'required|string',
-        ]);
-
-        Response::create([
-            'post_id' => $this->postIdBeingResponded,
-            'user_id' => Auth::id(),
-            'content' => $this->responseContent,
-        ]);
-
-        $this->responseContent = '';
-        $this->postIdBeingResponded = null;
-
-        $this->posts = Post::with(['user', 'responses.user'])->get();
     }
 
     public function toggleLike($postId)
@@ -156,10 +130,45 @@ class BlogPosts extends Component
     }
 
     public function isLiked($postId)
-{
-    $post = Post::findOrFail($postId);
-    return $post->likes()->where('user_id', auth()->id())->exists();
-}
+    {
+        $post = Post::findOrFail($postId);
+        return $post->likes()->where('user_id', auth()->id())->exists();
+    }
+
+    public function startResponding($postId)
+    {
+        $this->postIdBeingResponded = $postId;
+        $this->responseContent = '';
+    }
+
+    public function submitResponse()
+    {
+        $this->validate([
+            'responseContent' => 'required|string',
+        ]);
+
+        Response::create([
+            'post_id' => $this->postIdBeingResponded,
+            'user_id' => Auth::id(),
+            'content' => $this->responseContent,
+        ]);
+
+        $this->responseContent = '';
+        $this->postIdBeingResponded = null;
+
+        $this->posts = Post::with(['user', 'responses.user', 'likes'])->get();
+    }
+
+    public function selectEmoji($emoji)
+    {
+        $this->responseContent .= $emoji;
+        $this->showEmojiList = false;
+    }
+
+    public function toggleEmojiList()
+    {
+        $this->showEmojiList = !$this->showEmojiList;
+    }
 
     public function render()
     {
