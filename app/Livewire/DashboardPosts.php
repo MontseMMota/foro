@@ -13,7 +13,7 @@ class DashboardPosts extends Component
 
     public function mount()
     {
-        // Obtener los posts de los amigos del usuario actual
+        // Get posts from current user’s friends
         $this->posts = Auth::user()->friendsPosts;
     }
 

@@ -5,7 +5,7 @@
             <h2 class="text-lg font-bold mb-4">Buzón de Mensajes</h2>
         </x-slot>
         <div class="flex">
-            <!-- Menú lateral -->
+            <!-- Side menu  -->
             <aside class="w-1/4 p-4 bg-gray-200">
                 <ul>
                     <li>
@@ -26,7 +26,7 @@
                 </ul>
             </aside>
 
-            <!-- Contenido principal -->
+            <!-- Main content -->
             <section class="w-3/4 p-4">
                 @if (request('view') === 'sent')
                     <h3 class="text-lg font-bold mb-4">Mensajes Enviados</h3>
@@ -84,7 +84,7 @@
                                     </div>
                                     <p class="text-gray-800">{{ $message->message }}</p>
                                     
-                                    <!-- Formulario de respuesta -->
+                                    <!-- Reply form -->
                                     @if ($replyToMessageId === $message->id)
                                         <form wire:submit.prevent="replyToMessage({{ $message->id }})" class="mt-2">
                                             <textarea wire:model="replyMessage" rows="3" class="form-textarea w-full rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"></textarea>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string('image')->nullable(); // Define la columna 'image' como una cadena nullable
+            $table->string('image')->nullable(); 
         });
     }
 

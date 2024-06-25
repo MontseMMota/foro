@@ -52,7 +52,7 @@
                         @endif
                     </div>
         
-                    <!-- Formulario para Descripción -->
+                    <!-- Description form -->
                     <div class="mb-4 relative">
                         <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
                         @if ($editingDescription)
@@ -60,12 +60,12 @@
                                 <textarea id="description" wire:model.defer="description" class="form-textarea mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"></textarea>
                                 @error('description') <span class="text-red-500">{{ $message }}</span> @enderror
                                 
-                                <!-- Botón para abrir/ocultar la lista de emojis -->
+                                <!-- Toggle button  -->
                                 <div class="flex flex-row mt-4 relative">
                                     <button type="button" class="bg-blue-500 hover:bg-blue-700 text-gray-800 font-bold py-2 px-4 mr-4 rounded focus:outline-none focus:shadow-outline" wire:click="toggleEmojiList">😜</button>
                                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2 focus:outline-none focus:shadow-outline">Guardar Descripción</button>
 
-                                    <!-- Lista de emojis -->
+                                    <!-- Emoji list -->
                                     @if($showEmojiList)
                                     <div class="absolute top-full mt-2 left-0 bg-white shadow-lg rounded-lg border border-gray-200 max-w-md">
                                         <div class="grid grid-cols-6 gap-2 p-2 overflow-auto max-h-64">

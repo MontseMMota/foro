@@ -14,7 +14,7 @@ class Blog extends Component
     public $posts;
     public $content;
     public $title;
-    public $image; // Propiedad para manejar la imagen
+    public $image; 
     public $editPostId;
     public $editingPostId;
     public $editedTitle;
@@ -29,7 +29,7 @@ class Blog extends Component
     {
         $this->title = '';
         $this->content = '';
-        $this->image = null; // Restablecer la imagen
+        $this->image = null; 
     }
 
     public function createPost()
@@ -37,23 +37,23 @@ class Blog extends Component
         $this->validate([
             'title' => 'required|string|max:50',
             'content' => 'required|string',
-            'image' => 'nullable|image|max:1024', // Validación para la imagen (opcional)
+            'image' => 'nullable|image|max:1024', 
         ]);
 
         $imageName = null;
         if ($this->image) {
-            $imageName = $this->image->store('public/posts'); // Guardar la imagen en storage
+            $imageName = $this->image->store('public/posts'); 
         }
 
-        // Crear nuevo post
+        
         $post = new Post;
         $post->title = $this->title;
         $post->content = $this->content;
-        $post->image = $imageName; // Asignar el nombre de la imagen al campo correspondiente en la base de datos
+        $post->image = $imageName; 
         $post->user_id = Auth::id();
         $post->save();
 
-        $this->resetPostForm(); // Restablecer los campos del formulario después de crear el post
+        $this->resetPostForm(); 
 
         $this->posts = Post::with('user')->get();
         session()->flash('message', 'Post guardado exitosamente.');

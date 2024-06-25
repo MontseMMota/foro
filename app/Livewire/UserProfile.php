@@ -117,7 +117,7 @@ class UserProfile extends Component
     public function saveAvatar()
     {
         $this->validate([
-            'avatar' => 'image|max:1024', // 1MB Max
+            'avatar' => 'image|max:1024', 
         ]);
 
         $path = $this->avatar->store('avatars', 'public');

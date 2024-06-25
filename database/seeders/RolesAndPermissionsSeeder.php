@@ -10,14 +10,14 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        // Crear permisos
+        // Create permission
         $editOwnData = Permission::create(['name' => 'edit own data']);
         $deleteOwnData = Permission::create(['name' => 'delete own data']);
         $createData = Permission::create(['name' => 'create data']);
         $editAnyData = Permission::create(['name' => 'edit any data']);
         $deleteAnyData = Permission::create(['name' => 'delete any data']);
 
-        // Crear roles y asignar permisos
+        // Create role
         $roleAdmin = Role::create(['name' => 'admin']);
         $roleAdmin->permissions()->attach([
             $editOwnData->id,

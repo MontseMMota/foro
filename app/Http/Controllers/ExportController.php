@@ -13,7 +13,7 @@ class ExportController extends Controller
 {
     public function export()
     {
-        // Crear una colección de hojas con los datos de las tablas
+        // Create a collection of sheets with table data
         $sheets = new SheetCollection([
             'Users' => User::all(),
             'Posts' => Post::all(),
@@ -21,10 +21,10 @@ class ExportController extends Controller
             'Likes' => Like::all(),
         ]);
 
-        // Exportar las hojas a un archivo Excel
+        // Export the sheets to an Excel file
         (new FastExcel($sheets))->export('file.xlsx');
 
-        // Retornar el archivo al navegador para su descarga
+        // Return the file to the browser for download
         return response()->download(public_path('file.xlsx'))->deleteFileAfterSend(true);
     }
 

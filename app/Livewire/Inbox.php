@@ -28,21 +28,22 @@ class Inbox extends Component
         $user = Auth::user();
         
 
-        // Cargar mensajes recibidos y sus remitentes
+        // Upload received messages and their senders
         $this->receivedMessages = Message::where('recipient_id', $user->id)
-                                ->with('sender') // Cargar relación sender
+                                ->with('sender')
                                 ->orderBy('created_at', 'desc')
                                 ->get();
 
-        // Cargar mensajes enviados y sus destinatarios
+        // Upload sent messages and their recipients
         $this->sentMessages = Message::where('sender_id', $user->id)
-                                ->with('recipient') // Cargar relación recipient
+                                ->with('recipient')
                                 ->orderBy('created_at', 'desc')
                                 ->get();
-        
-                                $this->pendingRequests = User::whereHas('friends', function ($query) use ($user) {
-                                    $query->where('status', 'pending')
-                                          ->where('friend_id', $user->id);
+
+        //Upload pending frienship requests                       
+        $this->pendingRequests = User::whereHas('friends', function ($query) use ($user) {
+                                $query->where('status', 'pending')
+                                ->where('friend_id', $user->id);
                                 })
                                 ->get();
     }
@@ -70,7 +71,7 @@ class Inbox extends Component
     {
         $userId = Auth::id();
 
-        // Consulta para cargar las solicitudes de amistad pendientes del usuario autenticado
+        //Query to upload pending friend requests from the authenticated user
         $this->pendingRequests = Friend::where('friend_id', $userId)
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
@@ -80,12 +81,12 @@ class Inbox extends Component
 
     public function acceptFriendRequest($requestId)
     {
-        // Aquí aceptas la solicitud de amistad actualizando el estado en la tabla Friend
+        
         $friendRequest = Friend::findOrFail($requestId);
         $friendRequest->status = 'accepted';
         $friendRequest->save();
 
-        // Recargar las solicitudes después de aceptar la solicitud
+    
         $this->loadPendingRequests();
     }
 

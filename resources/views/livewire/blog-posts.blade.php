@@ -7,6 +7,7 @@
             
             <h1 class="text-center font-bold text-3xl mb-5 underline">Posts</h1>
             
+            {{-- Export Fast Excel or import --}}
             <a href="{{ route('export') }}" class="underline p-2 bg-slate-300">Descargar Datos</a>
             <div class="flex">
                 <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
@@ -64,7 +65,6 @@
                 @endif
             </div>
     
-            <!-- Mostrar la imagen del post si existe -->
             @if($post->image)
                 <div class="col-span-12 mt-4">
                     <img src="{{ asset('storage/' . $post->image) }}" alt="Imagen del Post" class="rounded-lg">
